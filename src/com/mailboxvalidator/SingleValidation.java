@@ -1,7 +1,6 @@
 package com.mailboxvalidator;
 
 import java.net.URLEncoder;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Hashtable;
 import java.util.ArrayList;
