@@ -25,7 +25,7 @@ public class MBVResult {
 	int credits_available;
 	String error_code;
 	String error_message;
-	String version = "1.0.0";
+	String version = "1.1.0";
 	MBVResult(String email) {
 		email_address = email;
 	}

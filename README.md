@@ -24,10 +24,10 @@ Dependencies
 
 An API key is required for this class to function.
 
-Go to https://www.mailboxvalidator.com/plans#api to sign up for a FREE API plan and you'll be given an API key.
+Go to http://www.mailboxvalidator.com/plans#api to sign up for a FREE API plan and you'll be given an API key.
 
-Usage
-=====
+Usage for validating emails
+===========================
 
 ```java
 import com.mailboxvalidator.*;
@@ -201,6 +201,160 @@ The error code if there is any error. See error table below.
 ### error_message
 
 The error message if there is any error. See error table below.
+
+
+Usage for checking if an email is from a disposable email provider
+==================================================================
+
+```java
+import com.mailboxvalidator.*;
+
+public class Main 
+{
+	public Main() 
+	{
+	}
+	
+	public static void main(String[] args) 
+	{
+		try
+		{
+			SingleValidation mbv = new SingleValidation("PASTE_YOUR_API_KEY_HERE");
+			MBVResult rec = mbv.DisposableEmail("example@example.com");
+			// System.out.println(rec); // for dumping out all result fields
+			
+			if (rec.getErrorMessage().equals("")) {
+				System.out.println("email_address: " + rec.getEmailAddress());
+				System.out.println("is_disposable: " + rec.getIsDisposable());
+				System.out.println("credits_available: " + rec.getCreditsAvailable());
+			}
+			else {
+				System.out.println("error_code: " + rec.getErrorCode());
+				System.out.println("error_message: " + rec.getErrorMessage());
+			}
+			System.out.println("version: " + rec.getVersion());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace(System.out);
+		}
+	}
+}
+```
+
+Functions
+=========
+
+### SingleValidation(api_key)
+
+Creates a new instance of the MailboxValidator object with the API key.
+
+### DisposableEmail(email_address)
+
+Check if the supplied email address is from a disposable email provider.
+
+Result Fields
+=============
+
+### email_address
+
+The input email address.
+
+### is_disposable
+
+Whether the email address is a temporary one from a disposable email provider.
+
+Return values: True, False
+
+### credits_available
+
+The number of credits left to perform validations.
+
+### error_code
+
+The error code if there is any error. See error table below.
+
+### error_message
+
+The error message if there is any error. See error table below.
+
+
+Usage for checking if an email is from a free email provider
+============================================================
+
+```java
+import com.mailboxvalidator.*;
+
+public class Main 
+{
+	public Main() 
+	{
+	}
+	
+	public static void main(String[] args) 
+	{
+		try
+		{
+			SingleValidation mbv = new SingleValidation("PASTE_YOUR_API_KEY_HERE");
+			MBVResult rec = mbv.FreeEmail("example@example.com");
+			// System.out.println(rec); // for dumping out all result fields
+			
+			if (rec.getErrorMessage().equals("")) {
+				System.out.println("email_address: " + rec.getEmailAddress());
+				System.out.println("is_free: " + rec.getIsFree());
+				System.out.println("credits_available: " + rec.getCreditsAvailable());
+			}
+			else {
+				System.out.println("error_code: " + rec.getErrorCode());
+				System.out.println("error_message: " + rec.getErrorMessage());
+			}
+			System.out.println("version: " + rec.getVersion());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace(System.out);
+		}
+	}
+}
+```
+
+Functions
+=========
+
+### SingleValidation(api_key)
+
+Creates a new instance of the MailboxValidator object with the API key.
+
+### FreeEmail(email_address)
+
+Check if the supplied email address is from a free email provider.
+
+Result Fields
+=============
+
+### email_address
+
+The input email address.
+
+### is_free
+
+Whether the email address is from a free email provider like Gmail or Hotmail.
+
+Return values: True, False
+
+### credits_available
+
+The number of credits left to perform validations.
+
+### error_code
+
+The error code if there is any error. See error table below.
+
+### error_message
+
+The error message if there is any error. See error table below.
+
+
 
 Errors
 ======
