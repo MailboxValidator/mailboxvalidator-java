@@ -16,10 +16,10 @@ import java.net.URL;
 
 public class SingleValidation {
 	private String api_key = "";
-	private static final String api_url = "http://api.mailboxvalidator.com/v1/validation/single";
-	private static final String api_url2 = "http://api.mailboxvalidator.com/v1/email/disposable";
-	private static final String api_url3 = "http://api.mailboxvalidator.com/v1/email/free";
-	private static final Pattern jsonpattern = Pattern.compile("(\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"|[0-9\\.\\-]+)", Pattern.CASE_INSENSITIVE);
+	private static final String api_url = "https://api.mailboxvalidator.com/v2/validation/single";
+	private static final String api_url2 = "https://api.mailboxvalidator.com/v2/email/disposable";
+	private static final String api_url3 = "https://api.mailboxvalidator.com/v2/email/free";
+	private static final Pattern jsonpattern = Pattern.compile("\"([^\"]+)\":(\"[^\"]+\"|[0-9.]+|null|true|false)", Pattern.CASE_INSENSITIVE);
 	
 	public SingleValidation(String apikey) {
 		api_key = apikey;
@@ -29,6 +29,7 @@ public class SingleValidation {
 * This function to validate an email address using the MailboxValidator API
 * @param EmailAddress The email address to validate.
 * @return MailboxValidator API results
+* @throws IOException If API call fails.
 */
 	public MBVResult ValidateEmail(String EmailAddress) throws IOException {
 		MBVResult record = new MBVResult(EmailAddress);
@@ -49,39 +50,42 @@ public class SingleValidation {
 			conn.setRequestMethod("GET");
 			conn.setRequestProperty("Accept", "application/json");
 			
-			if (conn.getResponseCode() != 200) {
+			if ((conn.getResponseCode() != 200) && (conn.getResponseCode() != 400) && (conn.getResponseCode() != 401)) {
 				throw new RuntimeException("Error connecting to API.");
 			}
 			
-			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-			
 			String output;
 			String output2 = "";
+			BufferedReader br;
+			Matcher m;
+			List<String> keyMatches = new ArrayList<String>();
+			List<String> valMatches = new ArrayList<String>();
+			if ((conn.getResponseCode() == 400) || (conn.getResponseCode() == 401)) {
+				br = new BufferedReader(new InputStreamReader((conn.getErrorStream())));
+			}
+			else {
+				br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+			}
 			while ((output = br.readLine()) != null) {
 				output2 = output2 + output;
 			}
 			conn.disconnect();
-			
-			List<String> allMatches = new ArrayList<String>();
-			Matcher m = jsonpattern.matcher(output2);
+			m = jsonpattern.matcher(output2);
 			while (m.find()) {
-				allMatches.add(m.group());
+				keyMatches.add(m.group(1));
+				valMatches.add(m.group(2));
 			}
 			
 			int x = 0;
-			int max = allMatches.size();
+			int max = keyMatches.size();
 			
 			String v1 = "";
 			String v2 = "";
-			for (x = 0; x < max; x = x + 2) {
-				v1 = allMatches.get(x).substring(1);
-				v1 = v1.substring(0, v1.length() - 1);
-				v2 = allMatches.get(x + 1);
-				
-				if (!v1.equals("credits_available")) {
-					v2 = v2.substring(1);
-					v2 = v2.substring(0, v2.length() - 1);
-				}
+			for (x = 0; x < max; x++) {
+				v1 = keyMatches.get(x);
+				v2 = valMatches.get(x);
+				v2 = v2.replaceAll("^\"", "");
+				v2 = v2.replaceAll("\"$", "");
 				
 				switch (v1) {
 					case "email_address":
@@ -136,7 +140,6 @@ public class SingleValidation {
 						record.status = v2;
 						break;
 					case "credits_available":
-						v2 = v2.replaceAll("\"", "");
 						record.credits_available = (v2.length() > 0) ? Integer.parseInt(v2) : 0;
 						break;
 					case "error_code":
@@ -165,6 +168,7 @@ public class SingleValidation {
 * This function to check if an email address is from a disposable email provider
 * @param EmailAddress The email address to check.
 * @return MailboxValidator API results
+* @throws IOException If API call fails.
 */
 	public MBVResult DisposableEmail(String EmailAddress) throws IOException {
 		MBVResult record = new MBVResult(EmailAddress);
@@ -185,39 +189,42 @@ public class SingleValidation {
 			conn.setRequestMethod("GET");
 			conn.setRequestProperty("Accept", "application/json");
 			
-			if (conn.getResponseCode() != 200) {
+			if ((conn.getResponseCode() != 200) && (conn.getResponseCode() != 400) && (conn.getResponseCode() != 401)) {
 				throw new RuntimeException("Error connecting to API.");
 			}
 			
-			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-			
 			String output;
 			String output2 = "";
+			BufferedReader br;
+			Matcher m;
+			List<String> keyMatches = new ArrayList<String>();
+			List<String> valMatches = new ArrayList<String>();
+			if ((conn.getResponseCode() == 400) || (conn.getResponseCode() == 401)) {
+				br = new BufferedReader(new InputStreamReader((conn.getErrorStream())));
+			}
+			else {
+				br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+			}
 			while ((output = br.readLine()) != null) {
 				output2 = output2 + output;
 			}
 			conn.disconnect();
-			
-			List<String> allMatches = new ArrayList<String>();
-			Matcher m = jsonpattern.matcher(output2);
+			m = jsonpattern.matcher(output2);
 			while (m.find()) {
-				allMatches.add(m.group());
+				keyMatches.add(m.group(1));
+				valMatches.add(m.group(2));
 			}
 			
 			int x = 0;
-			int max = allMatches.size();
+			int max = keyMatches.size();
 			
 			String v1 = "";
 			String v2 = "";
-			for (x = 0; x < max; x = x + 2) {
-				v1 = allMatches.get(x).substring(1);
-				v1 = v1.substring(0, v1.length() - 1);
-				v2 = allMatches.get(x + 1);
-				
-				if (!v1.equals("credits_available")) {
-					v2 = v2.substring(1);
-					v2 = v2.substring(0, v2.length() - 1);
-				}
+			for (x = 0; x < max; x++) {
+				v1 = keyMatches.get(x);
+				v2 = valMatches.get(x);
+				v2 = v2.replaceAll("^\"", "");
+				v2 = v2.replaceAll("\"$", "");
 				
 				switch (v1) {
 					case "email_address":
@@ -227,7 +234,6 @@ public class SingleValidation {
 						record.is_disposable = v2;
 						break;
 					case "credits_available":
-						v2 = v2.replaceAll("\"", "");
 						record.credits_available = (v2.length() > 0) ? Integer.parseInt(v2) : 0;
 						break;
 					case "error_code":
@@ -256,6 +262,7 @@ public class SingleValidation {
 * This function to check if an email address is from a free email provider
 * @param EmailAddress The email address to check.
 * @return MailboxValidator API results
+* @throws IOException If API call fails.
 */
 	public MBVResult FreeEmail(String EmailAddress) throws IOException {
 		MBVResult record = new MBVResult(EmailAddress);
@@ -276,39 +283,42 @@ public class SingleValidation {
 			conn.setRequestMethod("GET");
 			conn.setRequestProperty("Accept", "application/json");
 			
-			if (conn.getResponseCode() != 200) {
+			if ((conn.getResponseCode() != 200) && (conn.getResponseCode() != 400) && (conn.getResponseCode() != 401)) {
 				throw new RuntimeException("Error connecting to API.");
 			}
 			
-			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-			
 			String output;
 			String output2 = "";
+			BufferedReader br;
+			Matcher m;
+			List<String> keyMatches = new ArrayList<String>();
+			List<String> valMatches = new ArrayList<String>();
+			if ((conn.getResponseCode() == 400) || (conn.getResponseCode() == 401)) {
+				br = new BufferedReader(new InputStreamReader((conn.getErrorStream())));
+			}
+			else {
+				br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+			}
 			while ((output = br.readLine()) != null) {
 				output2 = output2 + output;
 			}
 			conn.disconnect();
-			
-			List<String> allMatches = new ArrayList<String>();
-			Matcher m = jsonpattern.matcher(output2);
+			m = jsonpattern.matcher(output2);
 			while (m.find()) {
-				allMatches.add(m.group());
+				keyMatches.add(m.group(1));
+				valMatches.add(m.group(2));
 			}
 			
 			int x = 0;
-			int max = allMatches.size();
+			int max = keyMatches.size();
 			
 			String v1 = "";
 			String v2 = "";
-			for (x = 0; x < max; x = x + 2) {
-				v1 = allMatches.get(x).substring(1);
-				v1 = v1.substring(0, v1.length() - 1);
-				v2 = allMatches.get(x + 1);
-				
-				if (!v1.equals("credits_available")) {
-					v2 = v2.substring(1);
-					v2 = v2.substring(0, v2.length() - 1);
-				}
+			for (x = 0; x < max; x++) {
+				v1 = keyMatches.get(x);
+				v2 = valMatches.get(x);
+				v2 = v2.replaceAll("^\"", "");
+				v2 = v2.replaceAll("\"$", "");
 				
 				switch (v1) {
 					case "email_address":
@@ -318,7 +328,6 @@ public class SingleValidation {
 						record.is_free = v2;
 						break;
 					case "credits_available":
-						v2 = v2.replaceAll("\"", "");
 						record.credits_available = (v2.length() > 0) ? Integer.parseInt(v2) : 0;
 						break;
 					case "error_code":
