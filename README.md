@@ -240,4 +240,4 @@ Errors
 Copyright
 =========
 
-Copyright (C) 2023 by MailboxValidator.com, support@mailboxvalidator.com
+Copyright (C) 2024 by MailboxValidator.com, support@mailboxvalidator.com
