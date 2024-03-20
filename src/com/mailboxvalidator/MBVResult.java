@@ -6,6 +6,7 @@ package com.mailboxvalidator;
 
 public class MBVResult {
 	String email_address;
+	String base_email_address;
 	String domain;
 	String is_free;
 	String is_syntax;
@@ -19,13 +20,16 @@ public class MBVResult {
 	String is_role;
 	String is_high_risk;
 	String is_catchall;
+	String is_dmarc_enforced;
+	String is_strict_spf;
+	String website_exist;
 	float mailboxvalidator_score;
 	float time_taken;
 	String status;
 	int credits_available;
 	String error_code;
 	String error_message;
-	String version = "2.0.0";
+	String version = "2.1.0";
 	MBVResult(String email) {
 		email_address = email;
 	}
@@ -34,6 +38,11 @@ public class MBVResult {
  * @return the email address being validated.
  */
 	public String getEmailAddress() { return email_address; }
+/**
+ * This method to get the base email address of the email address being validated.
+ * @return the base email address of the email address being validated.
+ */
+	public String getBaseEmailAddress() { return base_email_address; }
 /**
  * This method to get the domain name of the email address.
  * @return the domain name.
@@ -100,6 +109,21 @@ public class MBVResult {
  */
 	public String getIsCatchall() { return is_catchall; }
 /**
+ * This method to get whether the email domain is enforcing DMARC.
+ * @return "true", "false" or "null" if not applicable.
+ */
+	public String getIsDMARCEnforced() { return is_dmarc_enforced; }
+/**
+ * This method to get whether the email domain is using strict SPF.
+ * @return "true", "false" or "null" if not applicable.
+ */
+	public String getIsStrictSPF() { return is_strict_spf; }
+/**
+ * This method to get whether the email domain is a reachable website.
+ * @return "true", "false" or "null" if not applicable.
+ */
+	public String getWebsiteExist() { return website_exist; }
+/**
  * This method to get the email reputation score.
  * @return the email reputation score; score greater than 0.70 means good; score greater than 0.40 means fair; score less than or equal to 0.40 means poor.
  */
@@ -142,6 +166,7 @@ public class MBVResult {
 		String NL = System.getProperty("line.separator");
 		StringBuffer buf = new StringBuffer("MBVResult:"+NL);
 		buf.append("\temail_address = "+email_address+NL);
+		buf.append("\tbase_email_address = "+base_email_address+NL);
 		buf.append("\tdomain = "+domain+NL);
 		buf.append("\tis_free = "+is_free+NL);
 		buf.append("\tis_syntax = "+is_syntax+NL);
@@ -155,6 +180,9 @@ public class MBVResult {
 		buf.append("\tis_role = "+is_role+NL);
 		buf.append("\tis_high_risk = "+is_high_risk+NL);
 		buf.append("\tis_catchall = "+is_catchall+NL);
+		buf.append("\tis_dmarc_enforced = "+is_dmarc_enforced+NL);
+		buf.append("\tis_strict_spf = "+is_strict_spf+NL);
+		buf.append("\twebsite_exist = "+website_exist+NL);
 		buf.append("\tmailboxvalidator_score = "+mailboxvalidator_score+NL);
 		buf.append("\ttime_taken = "+time_taken+NL);
 		buf.append("\tstatus = "+status+NL);

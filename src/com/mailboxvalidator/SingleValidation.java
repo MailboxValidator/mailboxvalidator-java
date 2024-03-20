@@ -91,6 +91,9 @@ public class SingleValidation {
 					case "email_address":
 						record.email_address = v2;
 						break;
+					case "base_email_address":
+						record.base_email_address = v2;
+						break;
 					case "domain":
 						record.domain = v2;
 						break;
@@ -129,6 +132,15 @@ public class SingleValidation {
 						break;
 					case "is_catchall":
 						record.is_catchall = v2;
+						break;
+					case "is_dmarc_enforced":
+						record.is_dmarc_enforced = v2;
+						break;
+					case "is_strict_spf":
+						record.is_strict_spf = v2;
+						break;
+					case "website_exist":
+						record.website_exist = v2;
 						break;
 					case "mailboxvalidator_score":
 						record.mailboxvalidator_score = (v2.length() > 0) ? Float.parseFloat(v2) : (float)0.0;
